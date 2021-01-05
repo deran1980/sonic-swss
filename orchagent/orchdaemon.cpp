@@ -387,6 +387,13 @@ bool OrchDaemon::init()
 
     m_orchList.push_back(&CounterCheckOrch::getInstance(m_configDb));
 
+    /*new object to monitor tx errors*/
+    TableConnector confDbTxMon(m_configDb, CFG_TXMON_TABLE_NAME);
+    TableConnector stateDbTxMon(m_stateDb, STATE_TXMON_TABLE_NAME);
+    TableConnector appDbTxMon(m_applDb, APP_TXMON_TABLE_NAME);
+
+    m_orchList.push_back(new TxMonOrch(confDbTxMon, stateDbTxMon, appDbTxMon));
+
     if (WarmStart::isWarmStart())
     {
         bool suc = warmRestoreAndSyncUp();
